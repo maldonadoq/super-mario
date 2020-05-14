@@ -1,12 +1,16 @@
 import pygame as pg
+
 from .values import wwidth, wheight
+from .text import Text
 
 class MainMenu:
 	def __init__(self):
 		self.image = pg.image.load('images/utils/super_mario_bros.png').convert_alpha()
+		self.start_text = Text('Init Super Mario Bros', 16, (wwidth - wwidth*0.72, wheight - wheight*0.3))
 	
 	def render(self, game):
 		game.screen.blit(self.image, (50,50))
+		self.start_text.render(game)
 
 class LoadingMenu:
 	def __init__(self, game):
