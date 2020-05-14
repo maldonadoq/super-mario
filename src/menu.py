@@ -1,9 +1,9 @@
 import pygame as pg
-from values import width, height
+from .values import wwidth, wheight
 
 class MainMenu:
 	def __init__(self):
-		self.image = pg.image.load('images/super_mario_bros.png').convert_alpha()
+		self.image = pg.image.load('images/utils/super_mario_bros.png').convert_alpha()
 	
 	def render(self, game):
 		game.screen.blit(self.image, (50,50))
@@ -12,7 +12,7 @@ class LoadingMenu:
 	def __init__(self, game):
 		self.time = pg.time.get_ticks()
 		self.loading = True
-		self.background = pg.Surface((width, height))
+		self.background = pg.Surface((wwidth, wheight))
 	
 	def update(self, game):
 		if(pg.time.get_ticks() >= self.time + (5250 if(not self.loading) else 2500)):

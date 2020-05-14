@@ -1,2 +1,3 @@
-width = 800
-height = 448
+wwidth = 800
+wheight = 448
+fps = 32
