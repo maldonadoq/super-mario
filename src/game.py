@@ -11,8 +11,8 @@ class Game:
 
 		self.running = True
 
-		self.world = Map('one')
-		self.menu = MenuManager(self)
+		# self.world = Map('one')		
+		self.menu_manager = MenuManager(self)
 
 	
 	def loop(self):

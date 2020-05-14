@@ -1,34 +1,63 @@
 import pygame as pg
-from .values import *
+from values import width, height
 
 class MainMenu:
 	def __init__(self):
 		self.image = pg.image.load('images/super_mario_bros.png').convert_alpha()
 	
-	def render(self, core):
-		core.screen.blit(self.image, (50,50))
+	def render(self, game):
+		game.screen.blit(self.image, (50,50))
 
 class LoadingMenu:
-	def __init__(self, core):
+	def __init__(self, game):
 		self.time = pg.time.get_ticks()
 		self.loading = True
 		self.background = pg.Surface((width, height))
 	
-	def update(self, core):
+	def update(self, game):
 		if(pg.time.get_ticks() >= self.time + (5250 if(not self.loading) else 2500)):
 			if(self.loading):
-				core.mm.current_game_state = 'game'
-				core.get_sound().play('overworld', 999999, 0.5)
-				core.get_map().in_event = False
+				game.mm.current_game_state = 'game'
+				game.get_sound().play('overworld', 999999, 0.5)
+				game.get_map().in_event = False
 			else:
-				core.mm.current_game_state = 'menu'
-				core.get_map().reset(True)
+				game.mm.current_game_state = 'main_menu'
+				game.get_map().reset(True)
 	
 	def set_type(self, _type):
 		self.loading = _type
 
-	def render(self, core):
-		core.screen.blit(self.background, (0,0))
+	def render(self, game):
+		game.screen.blit(self.background, (0,0))
 
 	def update_time(self):
 		self.time = pg.time.get_ticks()
+
+class MenuManager:
+	def __init__(self, game):
+		self.current_game_state = 'main_menu'
+
+		self.main_menu = MainMenu()
+		self.loading_menu = LoadingMenu(game)
+
+	def update(self, game):
+		if(self.current_game_state == 'loading'):
+			self.loading_menu.update(game)
+		#elif(self.current_game_state == 'game'):
+		#	game.get_map().update(game)
+
+	def render(self, game):
+		if(self.current_game_state == 'main_menu'):
+			#game.get_map().render_map(game)
+			self.main_menu.render(game)
+		elif(self.current_game_state == 'loading'):
+			self.loading_menu.render(game)
+		#elif(self.current_game_state == 'game'):
+		#	game.get_map().render(game)
+		#	game.get_map().get_ui().render(game)
+		
+		pg.display.update()
+
+	def start_loading(self):
+		self.current_game_state = 'loading'
+		self.loading_menu.update_time()
