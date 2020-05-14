@@ -75,3 +75,4 @@ class Platform:
 
 		else:
 			game.screen.blit(self.image, game.get_map().get_camera().apply(self))
+			
