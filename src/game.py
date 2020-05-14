@@ -1,5 +1,6 @@
 import pygame as pg
 
+from .map import Map
 from .menu import MenuManager
 from .sounds import Sounds
 from .values import wwidth, wheight, fps
@@ -14,7 +15,7 @@ class Game:
 		self.screen = pg.display.set_mode((wwidth, wheight))
 		self.clock = pg.time.Clock()
 		
-		# self.world = Map('one')
+		self.world = Map('one')
 		self.sounds       = Sounds()
 		self.menu_manager = MenuManager(self)
 
@@ -85,6 +86,9 @@ class Game:
 
 	def get_mm(self):
 		return self.menu_manager
+
+	def get_map(self):
+		return self.world
 
 	def get_sound(self):
 		return self.sounds

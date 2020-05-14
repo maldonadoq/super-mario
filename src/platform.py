@@ -16,10 +16,62 @@ class Platform:
 		self.shake_offset = 0
 
 		if(self.type_id == 22):
-			self.current_image = None
-			self,image_tick = None
+			self.current_image = 0
+			self.image_tick = 0
 			self.is_activated = False
 			self.bonus = 'coin'
 	
 	def update(self):
-		pass
+		if(self.type_id == 22):
+			self.image_tick += 1
+
+			if(self.image_tick == 50):
+				self.current_image = 1
+			elif(self.image_tick == 60):
+				self.current_image = 2
+			elif(self.image_tick == 70):
+				self.current_image = 1
+			elif(self.image_tick == 80):
+				self.current_image = 0
+				self.image_tick = 0
+
+	def shake(self):
+		if(self.shaking_up):
+			self.shake_offset -= 2
+			self.rect.y -= 2
+		else:
+			self.shake_offset += 2
+			self.rect.y += 2
+		
+		if(self.shake_offset == -20):
+			self.shaking_up = False
+		if(self.shake_offset == 0):
+			self.shaking = False
+			self.shaking_up = True
+
+	def spawn_bonus(self, game):
+		self.is_activated = True
+		self.shaking = True
+		self.image_tick = 0
+		self.current_image = 3
+
+		if(self.bonus == 'mushroom'):
+			game.get_sound().play('mushroom_appear', 0, 0.5)
+		elif(self.bonus == 'coins'):
+			game.get_sound().play('coin', 0, 0.5)
+
+	def render(self, game):
+		if(self.type_id == 22):
+			if(not self.is_activated):
+				self.update()
+			elif(self.shaking):
+				self.shake()
+
+			game.screen.blit(self.image[self.current_image], game.get_map().get_camera().apply(self))
+
+		elif(self.type_id == 23 and self.shaking):
+			self.shake()
+			game.screen.blit(self.image, game.get_map().get_camera().apply(self))
+
+		else:
+			game.screen.blit(self.image, game.get_map().get_camera().apply(self))
