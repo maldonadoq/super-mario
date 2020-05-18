@@ -8,6 +8,8 @@ from .event import Event
 from .game_ui import GameUI
 from .player import Player
 from .flag import Flag
+from .tube import Tube
+from .text import Text
 from .values import wwidth, wheight
 
 class BackgroundObject:
@@ -23,14 +25,24 @@ class Map:
 	def __init__(self, world_name):
 		self.objs = []
 		self.objs_bg = []
+		self.tubes = []
+		self.debris = []
+		self.mobs = []
+		self.projectiles = []
+		self.text_objects = []
 
 		self.map = 0
 		self.sky = 0
 		self.flag = None
 		self.map_size = (0,0)		
 
+		self.textures = {}
 		self.world_name = world_name
-		self.load_world()
+		self.load_world()		
+
+		self.is_mob_spawned = [False, False]
+		self.score_for_killing_mob = 100
+		self.score_time = 0
 
 		self.in_event = False
 		self.time = 400
@@ -78,12 +90,28 @@ class Map:
 							self.objs_bg.append(self.map[x][y])
 
 			layer_num += 1
+
+		self.spawn_tube(28, 10)
+		self.spawn_tube(37, 9)
+		self.spawn_tube(46, 8)
+		self.spawn_tube(55, 8)
+		self.spawn_tube(163, 10)
+		self.spawn_tube(179, 10)
+
+		#self.mobs.append()
 		
+		self.map[21][8].bonus = 'mushroom'
+		self.map[78][8].bonus = 'mushroom'
+		self.map[109][4].bonus = 'mushroom'
+
 		self.flag = Flag(6336, 48)
 
 	def reset(self, reset_all):
 		self.objs = []
 		self.objs_bg = []
+		self.tubes = []
+		self.debris = []
+		self.mobs = []
 
 		self.in_event = False
 		self.flag = None
@@ -138,6 +166,34 @@ class Map:
 			self.map[x][y+1],
 			self.map[x+1][y+1]
 		)
+	
+	def get_mobs(self):
+		return self.mobs
+
+	def spawn_tube(self, x, y):
+		self.tubes.append(Tube(x, y))
+
+		for j in range(y, 12):
+			for i in range(x, x+2):
+				self.map[i][j] = Platform(x*32, y*32, image=None, type_id=0)
+
+	def spawn_score_text(self, x, y, score=None):
+		if(score is None):
+			self.text_objects.append(Text(str(self.score_for_killing_mob), 16, (x,y)))
+
+			self.score_time = pg.time.get_ticks()
+			if(self.score_for_killing_mob < 1600):
+				self.score_for_killing_mob *= 2
+
+		else:
+			self.text_objects.append(Text(str(score), 16, (x,y)))
+
+	def remove_object(self, object):
+		self.objs.remove(object)
+		self.map[object.rect.x // 32][object.rect.y // 32] = 0
+
+	def remove_text(self, text_object):
+		self.text_objects.remove(text_object)
 
 	def update_player(self, game):
 		self.get_player().update(game)
@@ -152,7 +208,29 @@ class Map:
 			if(self.time == 100 and self.tick == 1):
 				game.get_sound().start_fast_music(game)
 			elif(self.time == 0):
-				pass
+				self.player_death(game)
+
+	def update_score_time(self):
+		if(self.score_for_killing_mob != 100):
+			if(pg.time.get_ticks() > self.score_time + 750):
+				self.score_for_killing_mob // 2
+
+	def player_death(self, game):
+		self.in_event = True
+		self.get_player().reset_jump()
+		self.get_player().reset_move()
+		self.get_player().num_lives -= 1
+
+		if(self.get_player().num_lives == 0):
+			self.get_event().start_kill(game, game_over=True)
+		else:
+			self.get_event().start_kill(game, game_over=False)
+
+	def player_win(self, game):
+		self.in_event = True
+		self.get_player().reset_jump()
+		self.get_player().reset_move()
+		self.get_event().start_win(game)
 
 	def update(self, game):
 		if(not game.get_map().in_event):
@@ -167,7 +245,14 @@ class Map:
 		else:
 			self.get_event().update(game)
 
+		for text_object in self.text_objects:
+			text_object.update(game)
+
+		if(not self.in_event):
+			self.get_camera().update(game.get_map().get_player().rect)
+
 		self.update_time(game)
+		self.update_score_time()
 
 	def render_map(self, game):
 		game.screen.blit(self.sky, (0,0))
@@ -175,6 +260,9 @@ class Map:
 		for obj_group in (self.objs_bg, self.objs):
 			for obj in obj_group:
 				obj.render(game)
+
+		for tube in self.tubes:
+			tube.render(game)
 
 	def render(self, game):
 		game.screen.blit(self.sky, (0,0))
@@ -184,6 +272,9 @@ class Map:
 
 		for obj in self.objs:
 			obj.render(game)
+
+		for tube in self.tubes:
+			tube.render(game)
 		
 		self.flag.render(game)
 		self.get_player().render(game)

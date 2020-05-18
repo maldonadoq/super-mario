@@ -17,7 +17,7 @@ class LoadingMenu:
 		self.time = pg.time.get_ticks()
 		self.loading = True
 		self.background = pg.Surface((wwidth, wheight))
-		#self.text = Te
+		self.text = Text('World ' + game.world.get_name(), 32, (wwidth/2, wheight/2))
 	
 	def update(self, game):
 		if(pg.time.get_ticks() >= self.time + (5250 if(not self.loading) else 2500)):
@@ -27,13 +27,16 @@ class LoadingMenu:
 				game.get_map().in_event = False
 			else:
 				game.menu_manager.current_game_state = 'main_menu'
+				self.set_text_and_type('World ' + game.world.get_name(), True)
 				game.get_map().reset(True)
 	
-	def set_type(self, _type):
+	def set_text_and_type(self, text, _type):
+		self.text = Text(text, 32, (wwidth/2, wheight/2))
 		self.loading = _type
 
 	def render(self, game):
 		game.screen.blit(self.background, (0,0))
+		self.text.render(game)
 
 	def update_time(self):
 		self.time = pg.time.get_ticks()
