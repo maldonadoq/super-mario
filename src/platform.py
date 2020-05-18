@@ -59,6 +59,9 @@ class Platform:
 			game.get_sound().play('mushroom_appear', 0, 0.5)
 		elif(self.bonus == 'coins'):
 			game.get_sound().play('coin', 0, 0.5)
+			game.get_map().spawn_debris(self.rect.x + 8, self.rect.y -32, 1)
+			game.get_map().get_player().add_coins(1)
+			game.get_map().get_player().add_score(200)
 
 	def render(self, game):
 		if(self.type_id == 22):

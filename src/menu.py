@@ -17,15 +17,16 @@ class LoadingMenu:
 		self.time = pg.time.get_ticks()
 		self.loading = True
 		self.background = pg.Surface((wwidth, wheight))
+		#self.text = Te
 	
 	def update(self, game):
 		if(pg.time.get_ticks() >= self.time + (5250 if(not self.loading) else 2500)):
 			if(self.loading):
-				game.mm.current_game_state = 'game'
+				game.menu_manager.current_game_state = 'game'
 				game.get_sound().play('overworld', 999999, 0.5)
 				game.get_map().in_event = False
 			else:
-				game.mm.current_game_state = 'main_menu'
+				game.menu_manager.current_game_state = 'main_menu'
 				game.get_map().reset(True)
 	
 	def set_type(self, _type):
@@ -47,18 +48,18 @@ class MenuManager:
 	def update(self, game):
 		if(self.current_game_state == 'loading'):
 			self.loading_menu.update(game)
-		#elif(self.current_game_state == 'game'):
-		#	game.get_map().update(game)
+		elif(self.current_game_state == 'game'):
+			game.get_map().update(game)
 
 	def render(self, game):
 		if(self.current_game_state == 'main_menu'):
-			#game.get_map().render_map(game)
+			game.get_map().render_map(game)
 			self.main_menu.render(game)
 		elif(self.current_game_state == 'loading'):
 			self.loading_menu.render(game)
-		#elif(self.current_game_state == 'game'):
-		#	game.get_map().render(game)
-		#	game.get_map().get_ui().render(game)
+		elif(self.current_game_state == 'game'):
+			game.get_map().render(game)
+			game.get_map().get_ui().render(game)
 		
 		pg.display.update()
 

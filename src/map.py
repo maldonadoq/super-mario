@@ -4,6 +4,10 @@ from pytmx.util_pygame import load_pygame
 
 from .platform import Platform
 from .camera import Camera
+from .event import Event
+from .game_ui import GameUI
+from .player import Player
+from .flag import Flag
 from .values import wwidth, wheight
 
 class BackgroundObject:
@@ -22,6 +26,7 @@ class Map:
 
 		self.map = 0
 		self.sky = 0
+		self.flag = None
 		self.map_size = (0,0)		
 
 		self.world_name = world_name
@@ -32,7 +37,9 @@ class Map:
 		self.tick = 0
 
 		self.camera = Camera(self.map_size[0]*32, 14)
-		#self.event = Event()
+		self.event = Event()
+		self.game_ui = GameUI()
+		self.player = Player(128, 351)
 	
 	def load_world(self):
 		tmx = load_pygame('worlds/one/W11.tmx')
@@ -71,23 +78,33 @@ class Map:
 							self.objs_bg.append(self.map[x][y])
 
 			layer_num += 1
+		
+		self.flag = Flag(6336, 48)
 
 	def reset(self, reset_all):
 		self.objs = []
 		self.objs_bg = []
 
 		self.in_event = False
+		self.flag = None
 		self.sky = None
 		self.map = None
 
 		self.tick = 0
-		self.time = 0
+		self.time = 400
 
 		self.map_size = (0, 0)
 		self.load_world()
 
 		self.get_event().reset()
+		self.get_player().reset(reset_all)
 		self.get_camera().reset()
+
+	def get_name(self):
+		return self.world_name
+
+	def get_player(self):
+		return self.player
 
 	def get_camera(self):
 		return self.camera
@@ -95,5 +112,79 @@ class Map:
 	def get_event(self):
 		return self.event
 
+	def get_ui(self):
+		return self.game_ui
+
+	def get_blocks_for_collision(self, x, y):
+		return (
+			self.map[x][y - 1],
+			self.map[x][y + 1],
+			self.map[x][y],
+			self.map[x - 1][y],
+			self.map[x + 1][y],
+			self.map[x + 2][y],
+			self.map[x + 1][y - 1],
+			self.map[x + 1][y + 1],
+			self.map[x][y + 2],
+			self.map[x + 1][y + 2],
+			self.map[x - 1][y + 1],
+			self.map[x + 2][y + 1],
+			self.map[x][y + 3],
+			self.map[x + 1][y + 3]
+		)
+
+	def get_blocks_below(self, x, y):
+		return (
+			self.map[x][y+1],
+			self.map[x+1][y+1]
+		)
+
+	def update_player(self, game):
+		self.get_player().update(game)
+
+	def update_time(self, game):
+		if(not self.in_event):
+			self.tick += 1
+			if(self.tick % 40 == 0):
+				self.time -= 1
+				self.tick = 0
+
+			if(self.time == 100 and self.tick == 1):
+				game.get_sound().start_fast_music(game)
+			elif(self.time == 0):
+				pass
+
 	def update(self, game):
-		self.get_event().update(game)
+		if(not game.get_map().in_event):
+			if(self.get_player().in_level_up_animation):
+				self.get_player().change_power_lvl_animation()
+			elif(self.get_player().in_level_down_animation):
+				self.get_player().change_power_lvl_animation()
+				self.update_player(game)
+			else:
+				self.update_player(game)
+
+		else:
+			self.get_event().update(game)
+
+		self.update_time(game)
+
+	def render_map(self, game):
+		game.screen.blit(self.sky, (0,0))
+
+		for obj_group in (self.objs_bg, self.objs):
+			for obj in obj_group:
+				obj.render(game)
+
+	def render(self, game):
+		game.screen.blit(self.sky, (0,0))
+
+		for obj in self.objs_bg:
+			obj.render(game)
+
+		for obj in self.objs:
+			obj.render(game)
+		
+		self.flag.render(game)
+		self.get_player().render(game)
+		#self.get_ui().render(game)

@@ -24,7 +24,7 @@ class Camera:
 		return pg.Rect(x, y, width, height)
 
 	def apply(self, target):
-		return (target.rect.x + self.rect.x, target.y)
+		return (target.rect.x + self.rect.x, target.rect.y)
 
 	def update(self, target):
 		self.rect = self.complex_camera(target)
