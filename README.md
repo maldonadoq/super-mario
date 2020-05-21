@@ -2,4 +2,4 @@
 Super Mario Bros - Replicated Game
 
 ## Resources
-- [Images, Sound and Map](https://www.youtube.com/watch?v=WCkBDyX0qNI)
+- [Images, Sound and Map](https://www.youtube.com/watch?v=jya5He7KFsE)
