@@ -1,7 +1,7 @@
 import pygame as pg
 
 from .entity import Entity
-from .values import *
+from .values import gravity
 
 class Mushroom(Entity):
 	def __init__(self, x_pos, y_pos, move_direction):
@@ -20,7 +20,7 @@ class Mushroom(Entity):
 
 	def check_collision_with_player(self, game):
 		if self.rect.colliderect(game.get_map().get_player().rect):
-			game.get_map().get_player().set_powerlvl(2, game)
+			game.get_map().get_player().set_power_lvl(2, game)
 			game.get_map().get_mobs().remove(self)
 
 	def die(self, game, instantly, crushed):
@@ -36,7 +36,7 @@ class Mushroom(Entity):
 	def update(self, game):
 		if self.spawned:
 			if not self.on_ground:
-				self.y_vel += GRAVITY
+				self.y_vel += gravity
 
 			blocks = game.get_map().get_blocks_for_collision(self.rect.x // 32, self.rect.y // 32)
 			self.update_x_pos(blocks)

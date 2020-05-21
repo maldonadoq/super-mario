@@ -373,4 +373,4 @@ class Map:
 			text_object.render_in_game(game)
 
 		self.get_player().render(game)
-		#self.get_ui().render(game)
+		self.get_ui().render(game)

@@ -57,11 +57,19 @@ class Platform:
 
 		if(self.bonus == 'mushroom'):
 			game.get_sound().play('mushroom_appear', 0, 0.5)
+			if game.get_map().get_player().power_lvl == 0:
+				game.get_map().spawn_mushroom(self.rect.x, self.rect.y)
+			else:
+				game.get_map().spawn_flower(self.rect.x, self.rect.y)
 		elif(self.bonus == 'coins'):
 			game.get_sound().play('coin', 0, 0.5)
 			game.get_map().spawn_debris(self.rect.x + 8, self.rect.y -32, 1)
 			game.get_map().get_player().add_coins(1)
 			game.get_map().get_player().add_score(200)
+	
+	def destroy(self, game):
+		game.get_map().spawn_debris(self.rect.x, self.rect.y, 0)
+		game.get_map().remove_object(self)
 
 	def render(self, game):
 		if(self.type_id == 22):

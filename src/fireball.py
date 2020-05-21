@@ -1,5 +1,7 @@
 import pygame as pg
 
+from .values import gravity
+
 class Fireball(object):
 	def __init__(self, x_pos, y_pos, move_direction: bool):
 		super().__init__()
