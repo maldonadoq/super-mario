@@ -7,6 +7,7 @@ from .values import wwidth, wheight, fps
 
 class Game:
 	def __init__(self):
+		pg.mixer.pre_init(44100, -16, 2, 1024)
 		pg.init()
 
 		pg.display.set_caption('Super Mario Bros')
