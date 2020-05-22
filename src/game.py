@@ -1,3 +1,6 @@
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
+
 import pygame as pg
 
 from .map import Map
@@ -10,6 +13,9 @@ class Game:
 		pg.mixer.pre_init(44100, -16, 2, 1024)
 		pg.init()
 
+		icon = pg.image.load('images/icon.png')
+
+		pg.display.set_icon(icon)
 		pg.display.set_caption('Super Mario Bros')
 		pg.display.set_mode((wwidth, wheight))
 
@@ -47,25 +53,25 @@ class Game:
 				self.running = False
 
 			elif(ev.type == pg.KEYDOWN):
-				if(ev.key == pg.K_RIGHT):
+				if(ev.key == pg.K_RIGHT or ev.key == pg.K_d):
 					self.key_right = True
-				elif(ev.key == pg.K_LEFT):
+				elif(ev.key == pg.K_LEFT or ev.key == pg.K_a):
 					self.key_left = True
-				elif(ev.key == pg.K_DOWN):
+				elif(ev.key == pg.K_DOWN or ev.key == pg.K_s):
 					self.key_down = True
-				elif(ev.key == pg.K_UP):
+				elif(ev.key == pg.K_UP or ev.key == pg.K_w):
 					self.key_up = True
 				elif(ev.key == pg.K_LSHIFT):
 					self.key_shift = True
 
 			elif(ev.type == pg.KEYUP):
-				if(ev.key == pg.K_RIGHT):
+				if(ev.key == pg.K_RIGHT or ev.key == pg.K_d):
 					self.key_right = False
-				elif(ev.key == pg.K_LEFT):
+				elif(ev.key == pg.K_LEFT or ev.key == pg.K_a):
 					self.key_left = False
-				elif(ev.key == pg.K_DOWN):
+				elif(ev.key == pg.K_DOWN or ev.key == pg.K_s):
 					self.key_down = False
-				elif(ev.key == pg.K_UP):
+				elif(ev.key == pg.K_UP or ev.key == pg.K_w):
 					self.key_up = False
 				elif(ev.key == pg.K_LSHIFT):
 					self.key_shift = False
@@ -78,6 +84,8 @@ class Game:
 			elif(ev.type == pg.KEYDOWN):
 				if(ev.key == pg.K_RETURN):
 					self.get_mm().start_loading()
+				elif(ev.key == pg.K_ESCAPE):
+					self.running = False
 
 	def update(self):
 		self.get_mm().update(self)

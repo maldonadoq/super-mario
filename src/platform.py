@@ -61,7 +61,7 @@ class Platform:
 				game.get_map().spawn_mushroom(self.rect.x, self.rect.y)
 			else:
 				game.get_map().spawn_flower(self.rect.x, self.rect.y)
-		elif(self.bonus == 'coins'):
+		elif(self.bonus == 'coin'):
 			game.get_sound().play('coin', 0, 0.5)
 			game.get_map().spawn_debris(self.rect.x + 8, self.rect.y -32, 1)
 			game.get_map().get_player().add_coins(1)
