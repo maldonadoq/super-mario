@@ -56,20 +56,20 @@ class Platform:
 		self.current_image = 3
 
 		if(self.bonus == 'mushroom'):
-			game.get_sound().play('mushroom_appear', 0, 0.5)
-			if game.get_map().get_player().power_lvl == 0:
-				game.get_map().spawn_mushroom(self.rect.x, self.rect.y)
+			game.sounds.play('mushroom_appear', 0, 0.5)
+			if game.world.player.power_lvl == 0:
+				game.world.spawn_mushroom(self.rect.x, self.rect.y)
 			else:
-				game.get_map().spawn_flower(self.rect.x, self.rect.y)
+				game.world.spawn_flower(self.rect.x, self.rect.y)
 		elif(self.bonus == 'coin'):
-			game.get_sound().play('coin', 0, 0.5)
-			game.get_map().spawn_debris(self.rect.x + 8, self.rect.y -32, 1)
-			game.get_map().get_player().add_coins(1)
-			game.get_map().get_player().add_score(200)
+			game.sounds.play('coin', 0, 0.5)
+			game.world.spawn_debris(self.rect.x + 8, self.rect.y -32, 1)
+			game.world.player.add_coins(1)
+			game.world.player.add_score(200)
 	
 	def destroy(self, game):
-		game.get_map().spawn_debris(self.rect.x, self.rect.y, 0)
-		game.get_map().remove_object(self)
+		game.world.spawn_debris(self.rect.x, self.rect.y, 0)
+		game.world.remove_object(self)
 
 	def render(self, game):
 		if(self.type_id == 22):
@@ -78,12 +78,12 @@ class Platform:
 			elif(self.shaking):
 				self.shake()
 
-			game.screen.blit(self.image[self.current_image], game.get_map().get_camera().apply(self))
+			game.screen.blit(self.image[self.current_image], game.world.camera.apply(self))
 
 		elif(self.type_id == 23 and self.shaking):
 			self.shake()
-			game.screen.blit(self.image, game.get_map().get_camera().apply(self))
+			game.screen.blit(self.image, game.world.camera.apply(self))
 
 		else:
-			game.screen.blit(self.image, game.get_map().get_camera().apply(self))
+			game.screen.blit(self.image, game.world.camera.apply(self))
 			

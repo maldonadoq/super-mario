@@ -39,7 +39,7 @@ class Fireball(object):
 			if self.image_tick % 10 == 0:
 				self.current_image += 1
 			if self.current_image == 7:
-				game.get_map().remove_whizbang(self)
+				game.world.remove_whizbang(self)
 
 	def start_boom(self):
 		self.x_vel = 0
@@ -67,23 +67,23 @@ class Fireball(object):
 
 	def check_map_borders(self, game):
 		if self.rect.x <= 0:
-			game.get_map().remove_whizbang(self)
+			game.world.remove_whizbang(self)
 		elif self.rect.x >= 6768:
-			game.get_map().remove_whizbang(self)
+			game.world.remove_whizbang(self)
 		elif self.rect.y > 448:
-			game.get_map().remove_whizbang(self)
+			game.world.remove_whizbang(self)
 
 	def move(self, game):
 		self.y_vel += gravity
 
-		blocks = game.get_map().get_blocks_for_collision(self.rect.x // 32, self.rect.y // 32)
+		blocks = game.world.get_blocks_for_collision(self.rect.x // 32, self.rect.y // 32)
 		self.update_y_pos(blocks)
 		self.update_x_pos(blocks)
 
 		self.check_map_borders(game)
 
 	def check_collision_with_mobs(self, game):
-		for mob in game.get_map().get_mobs():
+		for mob in game.world.get_mobs():
 			if self.rect.colliderect(mob.rect):
 				if mob.collision:
 					mob.die(game, instantly=False, crushed=False)
@@ -98,4 +98,4 @@ class Fireball(object):
 			self.update_image(game)
 
 	def render(self, game):
-		game.screen.blit(self.images[self.current_image], game.get_map().get_camera().apply(self))
+		game.screen.blit(self.images[self.current_image], game.world.camera.apply(self))

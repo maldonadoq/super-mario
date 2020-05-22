@@ -41,10 +41,10 @@ class CoinDebris:
 			self.rect.y += self.y_vel
 			
 			if self.y_offset == 0:
-				game.get_map().debris.remove(self)
+				game.world.debris.remove(self)
 
 	def render(self, game):
-		game.screen.blit(self.images[self.current_image], game.get_map().get_camera().apply(self))
+		game.screen.blit(self.images[self.current_image], game.world.camera.apply(self))
 
 
 class PlatformDebris:
@@ -72,10 +72,10 @@ class PlatformDebris:
 			else:
 				self.rectangles[i].x += 1
 
-		if self.rectangles[1].y > game.get_map().map_size[1] * 32:
-			game.get_map().debris.remove(self)
+		if self.rectangles[1].y > game.world.map_size[1] * 32:
+			game.world.debris.remove(self)
 
 	def render(self, game):
 		for rect in self.rectangles:
 			self.rect = rect
-			game.screen.blit(self.image, game.get_map().get_camera().apply(self))
+			game.screen.blit(self.image, game.world.camera.apply(self))

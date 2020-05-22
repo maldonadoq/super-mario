@@ -36,19 +36,19 @@ class Koopa(Entity):
 
 	def check_collision_with_player(self, game):
 		if self.collision:
-			if self.rect.colliderect(game.get_map().get_player().rect):
+			if self.rect.colliderect(game.world.player.rect):
 				if self.state != -1:
-					if game.get_map().get_player().y_vel > 0:
+					if game.world.player.y_vel > 0:
 						self.change_state(game)
-						game.get_sound().play('kill_mob', 0, 0.5)
-						game.get_map().get_player().reset_jump()
-						game.get_map().get_player().jump_on_mob()
+						game.sounds.play('kill_mob', 0, 0.5)
+						game.world.player.reset_jump()
+						game.world.player.jump_on_mob()
 					else:
-						if not game.get_map().get_player().unkillable:
-							game.get_map().get_player().set_powerlvl(0, game)
+						if not game.world.player.unkillable:
+							game.world.player.set_powerlvl(0, game)
 
 	def check_collision_with_mobs(self, game):
-		for mob in game.get_map().get_mobs():
+		for mob in game.world.mobs:
 			if mob is not self:
 				if self.rect.colliderect(mob.rect):
 					if mob.collision:
@@ -56,13 +56,13 @@ class Koopa(Entity):
 
 	def die(self, game, instantly, crushed):
 		if not instantly:
-			game.get_map().get_player().add_score(game.get_map().score_for_killing_mob)
-			game.get_map().spawn_score_text(self.rect.x + 16, self.rect.y)
+			game.world.player.add_score(game.world.score_for_killing_mob)
+			game.world.spawn_score_text(self.rect.x + 16, self.rect.y)
 			self.state = -1
 			self.y_vel = -4
 			self.current_image = 5
 		else:
-			game.get_map().get_mobs().remove(self)
+			game.world.mobs.remove(self)
 
 	def change_state(self, game):
 		self.state += 1
@@ -73,15 +73,15 @@ class Koopa(Entity):
 			self.x_vel = 0
 			self.rect.h = 32
 			self.rect.y += 14
-			game.get_map().get_player().add_score(100)
-			game.get_map().spawn_score_text(self.rect.x + 16, self.rect.y, score=100)
+			game.world.player.add_score(100)
+			game.world.spawn_score_text(self.rect.x + 16, self.rect.y, score=100)
 
 		# 1 to 2
 		elif self.state == 2:
-			game.get_map().get_player().add_score(100)
-			game.get_map().spawn_score_text(self.rect.x + 16, self.rect.y, score=100)
+			game.world.player.add_score(100)
+			game.world.spawn_score_text(self.rect.x + 16, self.rect.y, score=100)
 
-			if game.get_map().get_player().rect.x - self.rect.x <= 0:
+			if game.world.player.rect.x - self.rect.x <= 0:
 				self.x_vel = 6
 			else:
 				self.x_vel = -6
@@ -117,14 +117,14 @@ class Koopa(Entity):
 			if not self.on_ground:
 				self.y_vel += gravity
 
-			blocks = game.get_map().get_blocks_for_collision(self.rect.x // 32, (self.rect.y - 14) // 32)
+			blocks = game.world.get_blocks_for_collision(self.rect.x // 32, (self.rect.y - 14) // 32)
 			self.update_x_pos(blocks)
 			self.update_y_pos(blocks)
 
 			self.check_map_borders(game)
 
 		elif self.state == 1:
-			blocks = game.get_map().get_blocks_for_collision(self.rect.x // 32, self.rect.y // 32)
+			blocks = game.world.get_blocks_for_collision(self.rect.x // 32, self.rect.y // 32)
 			self.update_x_pos(blocks)
 			self.update_y_pos(blocks)
 
@@ -134,7 +134,7 @@ class Koopa(Entity):
 			if not self.on_ground:
 				self.y_vel += gravity
 
-			blocks = game.get_map().get_blocks_for_collision(self.rect.x // 32, self.rect.y // 32)
+			blocks = game.world.get_blocks_for_collision(self.rect.x // 32, self.rect.y // 32)
 			self.update_x_pos(blocks)
 			self.update_y_pos(blocks)
 
@@ -148,4 +148,4 @@ class Koopa(Entity):
 			self.check_map_borders(game)
 
 	def render(self, game):
-		game.screen.blit(self.images[self.current_image], game.get_map().get_camera().apply(self))
+		game.screen.blit(self.images[self.current_image], game.world.camera.apply(self))

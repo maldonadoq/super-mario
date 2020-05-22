@@ -27,38 +27,38 @@ class Goombas(Entity):
 
 	def die(self, game, instantly, crushed):
 		if not instantly:
-			game.get_map().get_player().add_score(game.get_map().score_for_killing_mob)
-			game.get_map().spawn_score_text(self.rect.x + 16, self.rect.y)
+			game.world.player.add_score(game.world.score_for_killing_mob)
+			game.world.spawn_score_text(self.rect.x + 16, self.rect.y)
 
 			if crushed:
 				self.crushed = True
 				self.image_tick = 0
 				self.current_image = 2
 				self.state = -1
-				game.get_sound().play('kill_mob', 0, 0.5)
+				game.sounds.play('kill_mob', 0, 0.5)
 				self.collision = False
 
 			else:
 				self.y_vel = -4
 				self.current_image = 3
-				game.get_sound().play('shot', 0, 0.5)
+				game.sounds.play('shot', 0, 0.5)
 				self.state = -1
 				self.collision = False
 
 		else:
-			game.get_map().get_mobs().remove(self)
+			game.world.mobs.remove(self)
 
 	def check_collision_with_player(self, game):
 		if self.collision:
-			if self.rect.colliderect(game.get_map().get_player().rect):
+			if self.rect.colliderect(game.world.player.rect):
 				if self.state != -1:
-					if game.get_map().get_player().y_vel > 0:
+					if game.world.player.y_vel > 0:
 						self.die(game, instantly=False, crushed=True)
-						game.get_map().get_player().reset_jump()
-						game.get_map().get_player().jump_on_mob()
+						game.world.player.reset_jump()
+						game.world.player.jump_on_mob()
 					else:
-						if not game.get_map().get_player().unkillable:
-							game.get_map().get_player().set_power_lvl(0, game)
+						if not game.world.player.unkillable:
+							game.world.player.set_power_lvl(0, game)
 
 	def update_image(self):
 		self.image_tick += 1
@@ -75,7 +75,7 @@ class Goombas(Entity):
 			if not self.on_ground:
 				self.y_vel += gravity
 
-			blocks = game.get_map().get_blocks_for_collision(int(self.rect.x // 32), int(self.rect.y // 32))
+			blocks = game.world.get_blocks_for_collision(int(self.rect.x // 32), int(self.rect.y // 32))
 			self.update_x_pos(blocks)
 			self.update_y_pos(blocks)
 
@@ -85,11 +85,11 @@ class Goombas(Entity):
 			if self.crushed:
 				self.image_tick += 1
 				if self.image_tick == 50:
-					game.get_map().get_mobs().remove(self)
+					game.world.mobs.remove(self)
 			else:
 				self.y_vel += gravity
 				self.rect.y += self.y_vel
 				self.check_map_borders(game)
 
 	def render(self, game):
-		game.screen.blit(self.images[self.current_image], game.get_map().get_camera().apply(self))
+		game.screen.blit(self.images[self.current_image], game.world.camera.apply(self))

@@ -126,9 +126,9 @@ class Player:
 				self.already_jumped = True
 				self.next_jump_time = pg.time.get_ticks() + 750
 				if self.power_lvl >= 1:
-					game.get_sound().play('big_mario_jump', 0, 0.5)
+					game.sounds.play('big_mario_jump', 0, 0.5)
 				else:
-					game.get_sound().play('small_mario_jump', 0, 0.5)
+					game.sounds.play('small_mario_jump', 0, 0.5)
 
 		# Fireball shoot and fast moving
 		self.fast_moving = False
@@ -137,7 +137,7 @@ class Player:
 			if self.power_lvl == 2:
 				if pg.time.get_ticks() > self.next_fireball_time:
 					if not (self.in_level_up_animation or self.in_level_down_animation):
-						if len(game.get_map().projectiles) < 2:
+						if len(game.world.projectiles) < 2:
 							self.shoot_fireball(game, self.rect.x, self.rect.y, self.direction)
 
 		if not (game.key_right or game.key_left):
@@ -182,7 +182,7 @@ class Player:
 			if self.y_vel > max_fall_speed:
 				self.y_vel = max_fall_speed
 
-		blocks = game.get_map().get_blocks_for_collision(self.rect.x // 32, self.rect.y // 32)
+		blocks = game.world.get_blocks_for_collision(self.rect.x // 32, self.rect.y // 32)
 		
 		self.pos_x += self.x_vel
 		self.rect.x = self.pos_x
@@ -196,18 +196,18 @@ class Player:
 		coord_y = self.rect.y // 32
 		if self.power_lvl > 0:
 			coord_y += 1
-		for block in game.get_map().get_blocks_below(self.rect.x // 32, coord_y):
+		for block in game.world.get_blocks_below(self.rect.x // 32, coord_y):
 			if block != 0 and block.type != 'background_object':
 				if pg.Rect(self.rect.x, self.rect.y + 1, self.rect.w, self.rect.h).colliderect(block.rect):
 					self.on_ground = True
 
 		# Map border check
 		if self.rect.y > 448:
-			game.get_map().player_death(game)
+			game.world.player_death(game)
 
 		# End Flag collision check
-		if self.rect.colliderect(game.get_map().flag.pillar_rect):
-			game.get_map().player_win(game)
+		if self.rect.colliderect(game.world.flag.pillar_rect):
+			game.world.player_win(game)
 
 	def set_image(self, image_id):
 
@@ -301,7 +301,7 @@ class Player:
 	def activate_block_action(self, game, block):
 		# Question Block
 		if block.type_id == 22:
-			game.get_sound().play('block_hit', 0, 0.5)
+			game.sounds.play('block_hit', 0, 0.5)
 			if not block.is_activated:
 				block.spawn_bonus(game)
 
@@ -309,10 +309,10 @@ class Player:
 		elif block.type_id == 23:
 			if self.power_lvl == 0:
 				block.shaking = True
-				game.get_sound().play('block_hit', 0, 0.5)
+				game.sounds.play('block_hit', 0, 0.5)
 			else:
 				block.destroy(game)
-				game.get_sound().play('brick_break', 0, 0.5)
+				game.sounds.play('brick_break', 0, 0.5)
 				self.add_score(50)
 
 	def reset(self, reset_all):
@@ -362,34 +362,34 @@ class Player:
 
 	def set_power_lvl(self, power_lvl, game):
 		if self.power_lvl == 0 == power_lvl and not self.unkillable:
-			game.get_map().player_death(game)
+			game.world.player_death(game)
 			self.in_level_up_animation = False
 			self.in_level_down_animation = False
 
 		elif self.power_lvl == 0 and self.power_lvl < power_lvl:
 			self.power_lvl = 1
-			game.get_sound().play('mushroom_eat', 0, 0.5)
-			game.get_map().spawn_score_text(self.rect.x + 16, self.rect.y, score=1000)
+			game.sounds.play('mushroom_eat', 0, 0.5)
+			game.world.spawn_score_text(self.rect.x + 16, self.rect.y, score=1000)
 			self.add_score(1000)
 			self.in_level_up_animation = True
 			self.in_level_up_animation_time = 61
 
 		elif self.power_lvl == 1 and self.power_lvl < power_lvl:
-			game.get_sound().play('mushroom_eat', 0, 0.5)
-			game.get_map().spawn_score_text(self.rect.x + 16, self.rect.y, score=1000)
+			game.sounds.play('mushroom_eat', 0, 0.5)
+			game.world.spawn_score_text(self.rect.x + 16, self.rect.y, score=1000)
 			self.add_score(1000)
 			self.power_lvl = 2
 
 		elif self.power_lvl > power_lvl:
-			game.get_sound().play('pipe', 0, 0.5)
+			game.sounds.play('pipe', 0, 0.5)
 			self.in_level_down_animation = True
 			self.in_level_down_animation_time = 200
 			self.unkillable = True
 			self.unkillable_time = 200
 
 		else:
-			game.get_sound().play('mushroom_eat', 0, 0.5)
-			game.get_map().spawn_score_text(self.rect.x + 16, self.rect.y, score=1000)
+			game.sounds.play('mushroom_eat', 0, 0.5)
+			game.world.spawn_score_text(self.rect.x + 16, self.rect.y, score=1000)
 			self.add_score(1000)
 
 	def change_power_lvl_animation(self):
@@ -437,12 +437,12 @@ class Player:
 
 			x = self.rect.x // 32
 			y = self.rect.y // 32
-			blocks = game.get_map().get_blocks_for_collision(x, y)
+			blocks = game.world.get_blocks_for_collision(x, y)
 
 			self.rect.x += self.x_vel
-			if self.rect.colliderect(game.get_map().map[205][11]):
+			if self.rect.colliderect(game.world.map[205][11]):
 				self.visible = False
-				game.get_map().get_event().player_in_castle = True
+				game.world.get_event().player_in_castle = True
 			self.update_x_pos(blocks)
 
 			self.rect.top += self.y_vel
@@ -453,18 +453,18 @@ class Player:
 			y = self.rect.y // 32
 			if self.power_lvl > 0:
 				y += 1
-			for block in game.get_map().get_blocks_below(x, y):
+			for block in game.world.get_blocks_below(x, y):
 				if block != 0 and block.type != 'background_object':
 					if pg.Rect(self.rect.x, self.rect.y + 1, self.rect.w, self.rect.h).colliderect(block.rect):
 						self.on_ground = True
 
 		else:
-			if game.get_map().flag.flag_rect.y + 20 > self.rect.y + self.rect.h:
+			if game.world.flag.flag_rect.y + 20 > self.rect.y + self.rect.h:
 				self.rect.y += 3
 
 	def shoot_fireball(self, game, x, y, move_direction):
-		game.get_map().spawn_fireball(x, y, move_direction)
-		game.get_sound().play('fireball', 0, 0.5)
+		game.world.spawn_fireball(x, y, move_direction)
+		game.sounds.play('fireball', 0, 0.5)
 		self.next_fireball_time = pg.time.get_ticks() + 400
 
 	def add_coins(self, count):
@@ -475,4 +475,4 @@ class Player:
 
 	def render(self, game):
 		if self.visible:
-			game.screen.blit(self.image, game.get_map().get_camera().apply(self))
+			game.screen.blit(self.image, game.world.camera.apply(self))

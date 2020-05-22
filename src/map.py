@@ -27,7 +27,7 @@ class BackgroundObject:
 		self.type = 'background_object'
 
 	def render(self, game):
-		game.screen.blit(self.image, game.get_map().get_camera().apply(self))
+		game.screen.blit(self.image, game.world.camera.apply(self))
 
 class Map:
 	def __init__(self, world_name):
@@ -139,24 +139,12 @@ class Map:
 		self.textures = {}
 		self.load_world()
 
-		self.get_event().reset()
-		self.get_player().reset(reset_all)
-		self.get_camera().reset()
+		self.event.reset()
+		self.player.reset(reset_all)
+		self.camera.reset()
 
 	def get_name(self):
 		return self.world_name
-
-	def get_player(self):
-		return self.player
-
-	def get_camera(self):
-		return self.camera
-
-	def get_event(self):
-		return self.event
-
-	def get_ui(self):
-		return self.game_ui
 
 	def get_blocks_for_collision(self, x, y):
 		return (
@@ -182,9 +170,6 @@ class Map:
 			self.map[x+1][y+1]
 		)
 	
-	def get_mobs(self):
-		return self.mobs
-
 	def spawn_tube(self, x, y):
 		self.tubes.append(Tube(x, y))
 
@@ -193,13 +178,13 @@ class Map:
 				self.map[i][j] = Platform(i*32, j*32, image=None, type_id=0)
 
 	def spawn_mushroom(self, x, y):
-		self.get_mobs().append(Mushroom(x,y, True))
+		self.mobs.append(Mushroom(x,y, True))
 
 	def spawn_goombas(self, x, y, move_direction):
-		self.get_mobs().append(Goombas(x, y, move_direction))
+		self.mobs.append(Goombas(x, y, move_direction))
 
 	def spawn_koopa(self, x, y, move_direction):
-		self.get_mobs().append(Koopa(x, y, move_direction))
+		self.mobs.append(Koopa(x, y, move_direction))
 
 	def spawn_flower(self, x, y):
 		self.mobs.append(Flower(x, y))
@@ -235,7 +220,7 @@ class Map:
 		self.text_objects.remove(text_object)
 
 	def update_player(self, game):
-		self.get_player().update(game)
+		self.player.update(game)
 
 	def update_entities(self, game):
 		for mob in self.mobs:
@@ -251,7 +236,7 @@ class Map:
 				self.tick = 0
 
 			if(self.time == 100 and self.tick == 1):
-				game.get_sound().start_fast_music(game)
+				game.sounds.start_fast_music(game)
 			elif(self.time == 0):
 				self.player_death(game)
 
@@ -261,17 +246,17 @@ class Map:
 				self.score_for_killing_mob //= 2
 
 	def entity_collisions(self, game):
-		if not game.get_map().get_player().unkillable:
+		if not game.world.player.unkillable:
 			for mob in self.mobs:
 				mob.check_collision_with_player(game)
 
 	def try_spawn_mobs(self, game):
-		if self.get_player().rect.x > 2080 and not self.is_mob_spawned[0]:
+		if self.player.rect.x > 2080 and not self.is_mob_spawned[0]:
 			self.spawn_goombas(2495, 224, False)
 			self.spawn_goombas(2560, 96, False)
 			self.is_mob_spawned[0] = True
 
-		elif self.get_player().rect.x > 2460 and not self.is_mob_spawned[1]:
+		elif self.player.rect.x > 2460 and not self.is_mob_spawned[1]:
 			self.spawn_goombas(3200, 352, False)
 			self.spawn_goombas(3250, 352, False)
 			self.spawn_koopa(3400, 352, False)
@@ -285,36 +270,36 @@ class Map:
 
 	def player_death(self, game):
 		self.in_event = True
-		self.get_player().reset_jump()
-		self.get_player().reset_move()
-		self.get_player().num_lives -= 1
+		self.player.reset_jump()
+		self.player.reset_move()
+		self.player.num_lives -= 1
 
-		if(self.get_player().num_lives == 0):
-			self.get_event().start_kill(game, game_over=True)
+		if(self.player.num_lives == 0):
+			self.event.start_kill(game, game_over=True)
 		else:
-			self.get_event().start_kill(game, game_over=False)
+			self.event.start_kill(game, game_over=False)
 
 	def player_win(self, game):
 		self.in_event = True
-		self.get_player().reset_jump()
-		self.get_player().reset_move()
-		self.get_event().start_win(game)
+		self.player.reset_jump()
+		self.player.reset_move()
+		self.event.start_win(game)
 
 	def update(self, game):
 
 		self.update_entities(game)
 
-		if(not game.get_map().in_event):
-			if(self.get_player().in_level_up_animation):
-				self.get_player().change_power_lvl_animation()
-			elif(self.get_player().in_level_down_animation):
-				self.get_player().change_power_lvl_animation()
+		if(not game.world.in_event):
+			if(self.player.in_level_up_animation):
+				self.player.change_power_lvl_animation()
+			elif(self.player.in_level_down_animation):
+				self.player.change_power_lvl_animation()
 				self.update_player(game)
 			else:
 				self.update_player(game)
 
 		else:
-			self.get_event().update(game)
+			self.event.update(game)
 
 		# Debris is 1) Particles which appears when player destroy a brick block
 		# 2) Coins which appears when player activate a "question" platform
@@ -330,7 +315,7 @@ class Map:
 			text_object.update(game)
 
 		if(not self.in_event):
-			self.get_camera().update(game.get_map().get_player().rect)
+			self.camera.update(game.world.player.rect)
 
 		self.try_spawn_mobs(game)
 		self.update_time(game)
@@ -372,5 +357,5 @@ class Map:
 		for text_object in self.text_objects:
 			text_object.render_in_game(game)
 
-		self.get_player().render(game)
-		self.get_ui().render(game)
+		self.player.render(game)
+		self.game_ui.render(game)

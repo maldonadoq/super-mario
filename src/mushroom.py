@@ -19,12 +19,12 @@ class Mushroom(Entity):
 		self.image = pg.image.load('images/utils/mushroom.png').convert_alpha()
 
 	def check_collision_with_player(self, game):
-		if self.rect.colliderect(game.get_map().get_player().rect):
-			game.get_map().get_player().set_power_lvl(2, game)
-			game.get_map().get_mobs().remove(self)
+		if self.rect.colliderect(game.world.player.rect):
+			game.world.player.set_power_lvl(2, game)
+			game.world.mobs.remove(self)
 
 	def die(self, game, instantly, crushed):
-		game.get_map().get_mobs().remove(self)
+		game.world.mobs.remove(self)
 
 	def spawn_animation(self):
 		self.spawn_y_offset -= 1
@@ -38,7 +38,7 @@ class Mushroom(Entity):
 			if not self.on_ground:
 				self.y_vel += gravity
 
-			blocks = game.get_map().get_blocks_for_collision(self.rect.x // 32, self.rect.y // 32)
+			blocks = game.world.get_blocks_for_collision(self.rect.x // 32, self.rect.y // 32)
 			self.update_x_pos(blocks)
 			self.update_y_pos(blocks)
 
@@ -47,4 +47,4 @@ class Mushroom(Entity):
 			self.spawn_animation()
 
 	def render(self, game):
-		game.screen.blit(self.image, game.get_map().get_camera().apply(self))
+		game.screen.blit(self.image, game.world.camera.apply(self))

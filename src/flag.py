@@ -23,7 +23,7 @@ class Flag:
 
 	def render(self, game):
 		self.rect = self.pillar_rect
-		game.screen.blit(self.pillar_image, game.get_map().get_camera().apply(self))
+		game.screen.blit(self.pillar_image, game.world.camera.apply(self))
 
 		self.rect = self.flag_rect
-		game.screen.blit(self.flag_image, game.get_map().get_camera().apply(self))
+		game.screen.blit(self.flag_image, game.world.camera.apply(self))

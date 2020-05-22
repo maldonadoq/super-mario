@@ -12,10 +12,10 @@ class Text:
 		self.y_offset -= 1
 
 		if(self.y_offset == -100):
-			game.get_map().remove_text(self)
+			game.world.remove_text(self)
 
 	def render(self, game):
 		game.screen.blit(self.text, self.rect)
 
 	def render_in_game(self, game):
-		game.screen.blit(self.text, game.get_map().get_camera().apply(self))
+		game.screen.blit(self.text, game.world.camera.apply(self))

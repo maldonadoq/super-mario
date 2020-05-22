@@ -20,9 +20,9 @@ class Flower(Entity):
 		)
 
 	def check_collision_with_player(self, game):
-		if self.rect.colliderect(game.get_map().get_player().rect):
-			game.get_map().get_player().set_power_lvl(3, game)
-			game.get_map().get_mobs().remove(self)
+		if self.rect.colliderect(game.world.player.rect):
+			game.world.player.set_power_lvl(3, game)
+			game.world.mobs.remove(self)
 
 	def update_image(self):
 		self.image_tick += 1
@@ -48,4 +48,4 @@ class Flower(Entity):
 			self.spawn_animation()
 
 	def render(self, game):
-		game.screen.blit(self.images[self.current_image], game.get_map().get_camera().apply(self))
+		game.screen.blit(self.images[self.current_image], game.world.camera.apply(self))

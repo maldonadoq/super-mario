@@ -42,7 +42,7 @@ class Game:
 			self.clock.tick(fps)
 
 	def input(self):
-		if(self.get_mm().current_game_state == 'game'):
+		if(self.menu_manager.current_game_state == 'game'):
 			self.input_player()
 		else:
 			self.input_menu()
@@ -83,21 +83,12 @@ class Game:
 
 			elif(ev.type == pg.KEYDOWN):
 				if(ev.key == pg.K_RETURN):
-					self.get_mm().start_loading()
+					self.menu_manager.start_loading()
 				elif(ev.key == pg.K_ESCAPE):
 					self.running = False
 
 	def update(self):
-		self.get_mm().update(self)
+		self.menu_manager.update(self)
 
 	def render(self):
-		self.get_mm().render(self)
-
-	def get_mm(self):
-		return self.menu_manager
-
-	def get_map(self):
-		return self.world
-
-	def get_sound(self):
-		return self.sounds
+		self.menu_manager.render(self)

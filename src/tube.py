@@ -11,4 +11,4 @@ class Tube(pg.sprite.Sprite):
 		self.rect = pg.Rect(x*32, y*32, 64, length)
 
 	def render(self, game):
-		game.screen.blit(self.image, game.get_map().get_camera().apply(self))
+		game.screen.blit(self.image, game.world.camera.apply(self))
