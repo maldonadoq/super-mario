@@ -35,7 +35,7 @@ class Game:
 
 	
 	def loop(self):
-		while(self.running):
+		while(self.running):	
 			self.input()
 			self.update()
 			self.render()

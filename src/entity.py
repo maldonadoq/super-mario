@@ -21,7 +21,9 @@ class Entity:
 
 		for block in blocks:
 			if(block != 0 and block.type != 'background_object'):
+
 				if(pg.Rect.colliderect(self.rect, block.rect)):
+
 					if(self.x_vel > 0):
 						self.rect.right = block.rect.left
 						self.x_vel = - self.x_vel
@@ -42,9 +44,9 @@ class Entity:
 						self.y_vel = 0
 
 	def check_map_borders(self, game):
-		if self.rect.y >= 448:
+		if(self.rect.y >= 448):
 			self.die(game, True, False)
-		if self.rect.x <= 1 and self.x_vel < 0:
+		if(self.rect.x <= 1 and self.x_vel < 0):
 			self.x_vel = - self.x_vel
 
 	def die(self, game, instantly, crushed):

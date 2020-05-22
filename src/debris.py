@@ -22,25 +22,25 @@ class CoinDebris:
 	def update(self, game):
 		self.image_tick += 1
 
-		if self.image_tick % 15 == 0:
+		if(self.image_tick % 15 == 0):
 			self.current_image += 1
 
-		if self.current_image == 4:
+		if(self.current_image == 4):
 			self.current_image = 0
 			self.image_tick = 0
 
-		if self.moving_up:
+		if(self.moving_up):
 			self.y_offset += self.y_vel
 			self.rect.y += self.y_vel
 			
-			if self.y_offset < -50:
+			if(self.y_offset < -50):
 				self.moving_up = False
 				self.y_vel = -self.y_vel
 		else:
 			self.y_offset += self.y_vel
 			self.rect.y += self.y_vel
 			
-			if self.y_offset == 0:
+			if(self.y_offset == 0):
 				game.world.debris.remove(self)
 
 	def render(self, game):

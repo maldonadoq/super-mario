@@ -9,7 +9,7 @@ class Mushroom(Entity):
 
 		self.rect = pg.Rect(x_pos, y_pos, 32, 32)
 
-		if move_direction:
+		if(move_direction):
 			self.x_vel = 1
 		else:
 			self.x_vel = -1
@@ -19,7 +19,7 @@ class Mushroom(Entity):
 		self.image = pg.image.load('images/utils/mushroom.png').convert_alpha()
 
 	def check_collision_with_player(self, game):
-		if self.rect.colliderect(game.world.player.rect):
+		if(self.rect.colliderect(game.world.player.rect)):
 			game.world.player.set_power_lvl(2, game)
 			game.world.mobs.remove(self)
 
@@ -30,12 +30,12 @@ class Mushroom(Entity):
 		self.spawn_y_offset -= 1
 		self.rect.y -= 1
 
-		if self.spawn_y_offset == - 32:
+		if(self.spawn_y_offset == - 32):
 			self.spawned = True
 
 	def update(self, game):
-		if self.spawned:
-			if not self.on_ground:
+		if(self.spawned):
+			if(not self.on_ground):
 				self.y_vel += gravity
 
 			blocks = game.world.get_blocks_for_collision(self.rect.x // 32, self.rect.y // 32)

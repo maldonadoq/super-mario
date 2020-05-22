@@ -62,7 +62,7 @@ class MenuManager:
 			self.loading_menu.render(game)
 		elif(self.current_game_state == 'game'):
 			game.world.render(game)
-			game.world.get_ui().render(game)
+			game.world.game_ui.render(game)
 		
 		pg.display.update()
 

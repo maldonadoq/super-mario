@@ -251,12 +251,12 @@ class Map:
 				mob.check_collision_with_player(game)
 
 	def try_spawn_mobs(self, game):
-		if self.player.rect.x > 2080 and not self.is_mob_spawned[0]:
+		if(self.player.rect.x > 2080 and not self.is_mob_spawned[0]):
 			self.spawn_goombas(2495, 224, False)
 			self.spawn_goombas(2560, 96, False)
 			self.is_mob_spawned[0] = True
 
-		elif self.player.rect.x > 2460 and not self.is_mob_spawned[1]:
+		elif(self.player.rect.x > 2460 and not self.is_mob_spawned[1]):
 			self.spawn_goombas(3200, 352, False)
 			self.spawn_goombas(3250, 352, False)
 			self.spawn_koopa(3400, 352, False)

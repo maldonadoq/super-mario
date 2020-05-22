@@ -32,6 +32,6 @@ class Sounds:
 		self.sounds[name].stop()
 		
 	def start_fast_music(self, core):
-		if core.world.get_name() == 'one':
+		if(core.world.get_name() == 'one'):
 			self.stop('overworld')
 			self.play('overworld_fast', 99999, 0.5)

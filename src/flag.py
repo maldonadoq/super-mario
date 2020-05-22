@@ -18,7 +18,7 @@ class Flag:
 		self.flag_offset += 3
 		self.flag_rect.y += 3
 
-		if self.flag_offset >= 255:
+		if(self.flag_offset >= 255):
 			self.flag_omitted = True
 
 	def render(self, game):

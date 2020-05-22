@@ -8,7 +8,7 @@ class Goombas(Entity):
 		super().__init__()
 		self.rect = pg.Rect(x_pos, y_pos, 32, 32)
 
-		if move_direction:
+		if(move_direction):
 			self.x_vel = 1
 		else:
 			self.x_vel = -1
@@ -26,11 +26,11 @@ class Goombas(Entity):
 		self.images.append(pg.transform.flip(self.images[0], 0, 180))
 
 	def die(self, game, instantly, crushed):
-		if not instantly:
+		if(not instantly):
 			game.world.player.add_score(game.world.score_for_killing_mob)
 			game.world.spawn_score_text(self.rect.x + 16, self.rect.y)
 
-			if crushed:
+			if(crushed):
 				self.crushed = True
 				self.image_tick = 0
 				self.current_image = 2
@@ -49,30 +49,30 @@ class Goombas(Entity):
 			game.world.mobs.remove(self)
 
 	def check_collision_with_player(self, game):
-		if self.collision:
-			if self.rect.colliderect(game.world.player.rect):
-				if self.state != -1:
-					if game.world.player.y_vel > 0:
+		if(self.collision):
+			if(self.rect.colliderect(game.world.player.rect)):
+				if(self.state != -1):
+					if(game.world.player.y_vel > 0):
 						self.die(game, instantly=False, crushed=True)
 						game.world.player.reset_jump()
 						game.world.player.jump_on_mob()
 					else:
-						if not game.world.player.unkillable:
+						if(not game.world.player.unkillable):
 							game.world.player.set_power_lvl(0, game)
 
 	def update_image(self):
 		self.image_tick += 1
-		if self.image_tick == 14:
+		if(self.image_tick == 14):
 			self.current_image = 1
-		elif self.image_tick == 28:
+		elif(self.image_tick == 28):
 			self.current_image = 0
 			self.image_tick = 0
 
 	def update(self, game):
-		if self.state == 0:
+		if(self.state == 0):
 			self.update_image()
 
-			if not self.on_ground:
+			if(not self.on_ground):
 				self.y_vel += gravity
 
 			blocks = game.world.get_blocks_for_collision(int(self.rect.x // 32), int(self.rect.y // 32))
@@ -81,10 +81,10 @@ class Goombas(Entity):
 
 			self.check_map_borders(game)
 
-		elif self.state == -1:
-			if self.crushed:
+		elif(self.state == -1):
+			if(self.crushed):
 				self.image_tick += 1
-				if self.image_tick == 50:
+				if(self.image_tick == 50):
 					game.world.mobs.remove(self)
 			else:
 				self.y_vel += gravity

@@ -9,7 +9,12 @@ class Fireball(object):
 		self.rect = pg.Rect(x_pos, y_pos, 16, 16)
 		self.state = 0
 		self.direction = move_direction
-		self.x_vel = 5 if move_direction else -5
+
+		if(move_direction):
+			self.x_vel = 5
+		else:
+			self.x_vel = -5
+
 		self.y_vel = 0
 
 		self.current_image = 0
@@ -28,17 +33,17 @@ class Fireball(object):
 	def update_image(self, game):
 		self.image_tick += 1
 
-		if self.state == 0:
-			if self.image_tick % 15 == 0:
+		if(self.state == 0):
+			if(self.image_tick % 15 == 0):
 				self.current_image += 1
-				if self.current_image > 3:
+				if(self.current_image > 3):
 					self.current_image = 0
 					self.image_tick = 0
 
-		elif self.state == -1:
-			if self.image_tick % 10 == 0:
+		elif(self.state == -1):
+			if(self.image_tick % 10 == 0):
 				self.current_image += 1
-			if self.current_image == 7:
+			if(self.current_image == 7):
 				game.world.remove_whizbang(self)
 
 	def start_boom(self):
@@ -52,25 +57,25 @@ class Fireball(object):
 		self.rect.x += self.x_vel
 	  
 		for block in blocks:
-			if block != 0 and block.type != 'background_object':
-				if pg.Rect.colliderect(self.rect, block.rect):
+			if(block != 0 and block.type != 'background_object'):
+				if(pg.Rect.colliderect(self.rect, block.rect)):
 					# Fireball blows up only when collides on x-axis
 					self.start_boom()
 
 	def update_y_pos(self, blocks):
 		self.rect.y += self.y_vel
 		for block in blocks:
-			if block != 0 and block.type != 'background_object':
-				if pg.Rect.colliderect(self.rect, block.rect):
+			if(block != 0 and block.type != 'background_object'):
+				if(pg.Rect.colliderect(self.rect, block.rect)):
 					self.rect.bottom = block.rect.top
 					self.y_vel = -3
 
 	def check_map_borders(self, game):
-		if self.rect.x <= 0:
+		if(self.rect.x <= 0):
 			game.world.remove_whizbang(self)
-		elif self.rect.x >= 6768:
+		elif(self.rect.x >= 6768):
 			game.world.remove_whizbang(self)
-		elif self.rect.y > 448:
+		elif(self.rect.y > 448):
 			game.world.remove_whizbang(self)
 
 	def move(self, game):
@@ -83,18 +88,18 @@ class Fireball(object):
 		self.check_map_borders(game)
 
 	def check_collision_with_mobs(self, game):
-		for mob in game.world.get_mobs():
-			if self.rect.colliderect(mob.rect):
-				if mob.collision:
+		for mob in game.world.mobs:
+			if(self.rect.colliderect(mob.rect)):
+				if(mob.collision):
 					mob.die(game, instantly=False, crushed=False)
 					self.start_boom()
 
 	def update(self, game):
-		if self.state == 0:
+		if(self.state == 0):
 			self.update_image(game)
 			self.move(game)
 			self.check_collision_with_mobs(game)
-		elif self.state == -1:
+		elif(self.state == -1):
 			self.update_image(game)
 
 	def render(self, game):

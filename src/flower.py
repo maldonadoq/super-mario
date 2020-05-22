@@ -20,25 +20,25 @@ class Flower(Entity):
 		)
 
 	def check_collision_with_player(self, game):
-		if self.rect.colliderect(game.world.player.rect):
+		if(self.rect.colliderect(game.world.player.rect)):
 			game.world.player.set_power_lvl(3, game)
 			game.world.mobs.remove(self)
 
 	def update_image(self):
 		self.image_tick += 1
 
-		if self.image_tick == 60:
+		if(self.image_tick == 60):
 			self.image_tick = 0
 			self.current_image = 0
 
-		elif self.image_tick % 15 == 0:
+		elif(self.image_tick % 15 == 0):
 			self.current_image += 1
 
 	def spawn_animation(self):
 		self.spawn_y_offset -= 1
 		self.rect.y -= 1
 
-		if self.spawn_y_offset == -32:
+		if(self.spawn_y_offset == -32):
 			self.spawned = True
 
 	def update(self, game):

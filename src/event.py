@@ -60,10 +60,10 @@ class Event:
 		game.world.player.x_vel = 1
 		game.world.player.rect.x += 10
 		
-		if game.world.time >= 300:
+		if(game.world.time >= 300):
 			game.world.player.add_score(5000)
 			game.world.spawn_score_text(game.world.player.rect.x + 16, game.world.player.rect.y, score=5000)
-		elif 200 <= game.world.time < 300:
+		elif(200 <= game.world.time < 300):
 			game.world.player.add_score(2000)
 			game.world.spawn_score_text(game.world.player.rect.x + 16, game.world.player.rect.y, score=2000)
 		else:
@@ -73,16 +73,19 @@ class Event:
 	def update(self, game):
 
 		# Death
-		if self.type == 0:
-			self.y_vel += gravity * fall_multiplier if self.y_vel < 6 else 0
+		if(self.type == 0):
+			if(self.y_vel < 6):
+				self.y_vel += gravity * fall_multiplier
+
 			game.world.player.rect.y += self.y_vel
 
-			if pg.time.get_ticks() > self.time + self.delay:
-				if not self.game_over:
+			if(pg.time.get_ticks() > self.time + self.delay):
+				if(not self.game_over):
 					game.world.player.reset_move()
 					game.world.player.reset_jump()
 					game.world.reset(False)
 					game.sounds.play('overworld', 9999999, 0.5)
+
 				else:
 					game.menu_manager.current_game_state = 'loading'
 					game.menu_manager.loading_menu.set_text_and_type('Game Over', False)
@@ -90,39 +93,39 @@ class Event:
 					game.sounds.play('game_over', 0, 0.5)
 
 		# Flag win
-		elif self.type == 1:
+		elif(self.type == 1):
 
-			if not self.player_in_castle:
+			if(not self.player_in_castle):
 
-				if not game.world.flag.flag_omitted:
+				if(not game.world.flag.flag_omitted):
 					game.world.player.set_image(5)
 					game.world.flag.move_flag_down()
 					game.world.player.flag_animation_move(game, False)
 
 				else:
 					self.tick += 1
-					if self.tick == 1:
+					if(self.tick == 1):
 						game.world.player.direction = False
 						game.world.player.set_image(6)
 						game.world.player.rect.x += 20
-					elif self.tick >= 30:
+					elif(self.tick >= 30):
 						game.world.player.flag_animation_move(game, True)
 						game.world.player.update_image(game)
 
 			else:
-				if game.world.time > 0:
+				if(game.world.time > 0):
 					self.score_tick += 1
-					if self.score_tick % 10 == 0:
+					if(self.score_tick % 10 == 0):
 						game.sounds.play('scorering', 0, 0.5)
 
 					game.world.time -= 1
 					game.world.player.add_score(50)
 
 				else:
-					if self.time == 0:
+					if(self.time == 0):
 						self.time = pg.time.get_ticks()
 
-					elif pg.time.get_ticks() >= self.time + self.delay:
+					elif(pg.time.get_ticks() >= self.time + self.delay):
 						game.menu_manager.current_game_state = 'loading'
 						game.menu_manager.loading_menu.set_text_and_type('End Game', False)
 						game.menu_manager.loading_menu.update_time()

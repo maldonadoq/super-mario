@@ -57,7 +57,7 @@ class Platform:
 
 		if(self.bonus == 'mushroom'):
 			game.sounds.play('mushroom_appear', 0, 0.5)
-			if game.world.player.power_lvl == 0:
+			if(game.world.player.power_lvl == 0):
 				game.world.spawn_mushroom(self.rect.x, self.rect.y)
 			else:
 				game.world.spawn_flower(self.rect.x, self.rect.y)
