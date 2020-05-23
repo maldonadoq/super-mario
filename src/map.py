@@ -66,7 +66,7 @@ class Map:
 		self.map_size = (tmx.width, tmx.height)
 
 		self.sky = pg.Surface((wwidth, wheight))
-		self.sky.fill((pg.Color('#5c94fc')))
+		self.sky.fill((pg.Color('#2a72f9')))
 
 		self.map = [[0]*tmx.height for i in range(tmx.width)]
 
